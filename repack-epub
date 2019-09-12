@@ -1,0 +1,6 @@
+#! /bin/sh
+
+doc=${1:-"output.epub"}
+[ -e mimetype ] || printf '%s' 'application/epub+zip' > mimetype
+zip -X -Z store "$doc" mimetype
+zip -r "$doc" . -x mimetype

@@ -1,0 +1,4 @@
+#! /bin/sh
+
+app=$(basename "$0")
+open -a "$app" "$@"

@@ -1,0 +1,123 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+import yaml
+import jinja2
+from os import walk, mkdir
+from os.path import basename, exists, isdir, join, relpath, normpath, splitext
+from getopt import getopt
+from colormath.color_objects import sRGBColor, LCHabColor, LabColor, CMYKColor
+from colormath.color_conversions import convert_color
+
+color_scheme = {}
+custom_filters = {}
+output_dir = "output"
+templates_dir = "templates"
+color_space = None
+filename_suffix = "" 
+preserve_extensions = False
+space_to_class = {"LCH": LCHabColor, "Lab": LabColor, "CMYK": CMYKColor}
+
+try:
+    filters_dir = os.getenv("JINJA_FILTERS_DIR")
+    if filters_dir is not None:
+        sys.path.insert(1, filters_dir);
+        from trtpl_filters import *
+        sys.path.pop(1)
+except:
+    pass
+
+def copy_dirs(src, dst):
+    for root, dirnames, filenames in walk(src):
+        for name in dirnames:
+            pth = normpath(join(dst, relpath(root, templates_dir), name))
+            if not exists(pth):
+                mkdir(pth)
+
+def interpret_values():
+    global color_scheme, color_space
+    for name, value in color_scheme.items():
+        source_color = space_to_class[color_space](*value)
+        rgb_color = convert_color(source_color, sRGBColor)
+        clamped_rgb = sRGBColor(rgb_color.clamped_rgb_r, rgb_color.clamped_rgb_g, rgb_color.clamped_rgb_b)
+        color_scheme[name] = clamped_rgb.get_rgb_hex()
+
+def translate_templates():
+    ldr = jinja2.FileSystemLoader(templates_dir)
+    env = jinja2.Environment(loader=ldr)
+    env.filters.update(custom_filters)
+    if color_space is not None:
+        interpret_values()
+
+    if not exists(output_dir):
+        mkdir(output_dir)
+    elif not isdir(output_dir):
+        print("Not a directory: '{}'.".format(output_dir), file=sys.stderr)
+        sys.exit(1)
+
+    copy_dirs(templates_dir, output_dir)
+
+    for tpl_pth in env.list_templates():
+        tpl = env.get_template(tpl_pth)
+        output_root = tpl_pth if preserve_extensions else splitext(tpl_pth)[0]
+        output_pth = "{}/{}{}".format(output_dir, output_root, filename_suffix)
+        with open(output_pth, "w") as f:
+            f.write(tpl.render(color_scheme))
+        tpl_mode = os.stat(join(templates_dir, tpl_pth)).st_mode
+        os.chmod(output_pth, tpl_mode)
+
+def usage():
+    print("""
+SYNOPSIS
+    {} [OPTIONS] TEMPLATES_DIR
+
+OPTIONS
+    -h, --help
+        Show the synopsis on standard output and exit.
+
+    -c, --color-scheme COLOR_SCHEME
+        Read colors from the given file.
+
+    -i, --color-space LCH|Lab|CMYK
+        Set the input color space.
+
+    -o, --output-directory OUTPUT_DIR
+        Define where the rendered templates will be stored.
+
+    -s, --filename-suffix SUFFIX
+        Add the given suffix to the output file names.
+
+    -p, --preserve-extensions
+        Preserve templates file name extensions in outputs.
+""".format(basename(sys.argv[0])))
+    sys.exit(1)
+
+def main():
+    global color_scheme, color_space, output_dir, templates_dir, filename_suffix, preserve_extensions
+    opts, args = getopt(sys.argv[1:], "hpc:i:o:s:", ["help", "preserve-extensions", "color-scheme=", "color-space=", "output-directory=", "filename-suffix="])
+
+    if len(args) < 1:
+        usage()
+
+    templates_dir = args[0]
+
+    for opt, val in opts:
+        if opt in ("-h", "--help"):
+            usage()
+        elif opt in ("-c", "--color-scheme"):
+            with open(val, "r") as f:
+                color_scheme.update(yaml.load(f.read()))
+        elif opt in ("-i", "--color-space"):
+            color_space = val
+        elif opt in ("-o", "--output-directory"):
+            output_dir = val
+        elif opt in ("-s", "--filename-suffix"):
+            filename_suffix = val
+        elif opt in ("-p", "--preserve-extensions"):
+            preserve_extensions = True
+
+    translate_templates()
+
+if __name__ == "__main__":
+    main()

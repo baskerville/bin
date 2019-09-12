@@ -1,0 +1,16 @@
+#! /bin/sh
+
+URL_DB="$XDG_DATA_HOME"/urls.z
+verb=$1
+shift
+
+case "$verb" in
+	add)
+		fdb -i "$URL_DB" -u -a "$@" ;;
+	rm|remove)
+		fdb -i "$URL_DB" -d "$@" ;;
+	ls|list)
+		fdb -s atime -i "$URL_DB" -q "(?i)$@" | tail -r;;
+	*)
+		exit 1 ;;
+esac

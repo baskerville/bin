@@ -1,0 +1,11 @@
+#! /usr/bin/env python3
+
+import sys
+from urllib.parse import unquote
+
+enc = "utf-8"
+if len(sys.argv) > 1:
+    enc = sys.argv[1]
+
+for line in sys.stdin:
+    print(unquote(line, encoding=enc), end="")

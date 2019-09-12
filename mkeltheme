@@ -1,0 +1,8 @@
+#! /bin/sh
+
+while [ $# -gt 0 ] ; do
+	base=${1%-theme.*}
+	{ echo "(add-to-list 'load-path \".\")\n(defun custom-theme-set-faces (&rest faces) (prin1 faces))"; cat "$1"; } > "$TMPDIR"/"${base}-maker.el"
+	emacs --script "$TMPDIR"/"${base}-maker.el" > "${base}.elTheme"
+	shift
+done

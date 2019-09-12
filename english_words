@@ -1,0 +1,5 @@
+#! /bin/sh
+
+WORDS=$XDG_DATA_HOME/dicen.txt
+
+[ -n "$@" ] && grep -E "$@" "$WORDS"

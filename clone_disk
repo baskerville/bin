@@ -1,0 +1,4 @@
+#! /bin/sh
+
+index=$1
+diskutil unmountDisk /dev/disk${index} && dd if=/dev/rdisk${index} of=clone.img bs=64k conv=noerror,sync

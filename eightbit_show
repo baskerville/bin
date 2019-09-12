@@ -1,0 +1,26 @@
+#! /bin/sh
+
+CHUNK_LENGTH=8
+colors=$(cat | grep -o 'color[0-9]\+' | tr -d '[a-z]')
+only_block=0
+only_index=0
+
+[ $# -gt 0 ] && [ $@ = '-b' ] && only_block=1
+[ $# -gt 0 ] && [ $@ = '-i' ] && only_index=1
+
+newrow=-1
+counter=0
+block='■'
+
+for i in $colors
+do
+    [ $newrow -eq 0 ] && printf '\n'
+    pattern=''
+    [ $only_index -eq 0 ] && pattern="${block}${pattern}"
+    [ $only_block -eq 0 ] && pattern="${pattern}$(printf '%03d' $i)"
+    printf " \033[38;5;${i}m%s" "$pattern"
+    counter=$((counter+1))
+    newrow=$((counter%CHUNK_LENGTH))
+done
+
+printf '\n'

@@ -1,0 +1,24 @@
+#! /bin/sh
+
+trap 'exit 1' INT
+ 
+[ $# -lt 1 ] && exit 1
+
+msg=$1
+defans=${2:-"n"}
+[ "$defans" = "y" ] && hint="Y/n" || hint="y/N"
+
+while true ; do
+	printf "%s [%s] " "$msg" "$hint"
+	read ans
+	case "$ans" in
+		Y|y|yes)
+			exit 0 ;;
+		N|n|no)
+			exit 1 ;;
+		"")
+			[ "$defans" = "y" ] && exit 0 || exit 1 ;;
+		*)
+			continue ;;
+	esac
+done

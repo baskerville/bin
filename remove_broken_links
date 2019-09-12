@@ -1,0 +1,8 @@
+#! /bin/sh
+
+# The *-L* option makes *find* resolve symbolic links so that the regular file
+# is return instead of the link that points to it. Unless the link is broken,
+# in which case, it will return the link itself. The plus sign at the end of
+# the line tells *find* to try to pass as many arguments as possible to *rm*.
+
+find -L "${1:-.}" -type l -print -exec rm -- {} +

@@ -1,0 +1,40 @@
+#! /usr/bin/env python3
+
+import sys, re
+from urllib.parse import urljoin, urlparse
+from getopt import getopt
+
+base = None
+attr = 'href'
+
+def format_links(line):
+    global base, attr
+    hyper_refs = re.findall('(?<={}=")[^"]+'.format(attr), line, flags = re.I)
+    for href in hyper_refs:
+        if base:
+            print(urljoin(base, href))
+        else:
+            print(href)
+
+def main():
+    global base, attr
+    opts, args = getopt(sys.argv[1:], 'b:t:', ['base=', 'attr='])
+
+    for opt, val in opts:
+        if opt in ('-b', '--base'):
+            base = val
+        if opt in ('-t', '--attr'):
+            attr = val
+
+    if len(args) > 0:
+        for filename in args:
+            fd = open(filename, 'r', errors='ignore')
+            for line in fd.readlines():
+                format_links(line)
+            fd.close()
+    else:
+        for line in sys.stdin:
+            format_links(line)
+
+if __name__ == '__main__':
+    main()

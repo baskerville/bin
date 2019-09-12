@@ -1,0 +1,10 @@
+#! /bin/sh
+
+while [ $# -gt 0 ] ; do
+	PNG=$1
+	PBM=${PNG%.*}.pbm
+	convert "$PNG" "$PBM"
+	potrace -c -q "$PBM"
+	rm "$PBM"
+	shift
+done

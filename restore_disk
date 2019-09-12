@@ -1,0 +1,5 @@
+#! /bin/sh
+
+index=$1
+source=$2
+diskutil unmountDisk /dev/disk${index} && sudo dd if="$source" of=/dev/rdisk${index} bs=64k conv=noerror,sync

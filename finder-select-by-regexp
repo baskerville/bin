@@ -1,0 +1,33 @@
+#! /usr/bin/osascript
+
+on run argv
+	tell application "Finder"
+		set selList to selection
+		set re to item 1 of argv
+		
+		if (re is not equal to "") then
+			try
+				set wd to ((target of front window) as alias)
+			on error
+				set wd to (path to desktop as alias) 
+			end try
+			
+			set pth to quoted form of text 1 thru -2 of POSIX path of wd
+			
+			if (pth is equal to "''") then
+				set pth to "/"
+			end if
+			
+			set matches to every paragraph of (do shell script "find " & pth & " -depth 1 | perl -ne 'print if /" & re & "/'")
+			set selHeap to {}
+			
+			repeat with m in matches
+				set selHeap to selHeap & (m as POSIX file)
+			end repeat
+
+			select selList & selHeap
+		end if
+	end tell
+end run
+
+# vim: ft=applescript

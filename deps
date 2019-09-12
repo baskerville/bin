@@ -1,0 +1,41 @@
+#! /bin/sh
+
+_deps() {
+	printf "%s\n" "$1"
+	local names="$(sed -En 's/^#include *"([^"]+)".*/\1/p' "$1")"
+	for nm in $names ; do
+		_deps "$nm"
+	done
+}
+
+suffix=.o
+objvar=0
+
+while getopts 'hos:' opt ; do
+	case $opt in
+		s)
+			suffix=$OPTARG
+			;;
+		o)
+			objvar=1
+			;;
+		h)
+			printf "%s [-h|-o|-s SUFFIX] CSOURCE ...\n" "${0##*/}"
+			;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+while [ $# -gt 0 ] ; do
+	OBJ="${1%.*}${suffix}"
+	printf "%s:" "$OBJ"
+	for nm in $(_deps "$1" | sort -t . -k 2 | uniq) ; do
+		printf " %s" "$nm"
+	done
+	printf "\n"
+	if [ "$objvar" -eq 1 ] ; then
+		printf "OBJ += %s\n" "$OBJ"
+	fi
+	shift
+done

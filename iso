@@ -1,0 +1,31 @@
+#! /bin/sh
+
+usage() {
+    status=${1:-0}
+    printf "%s [-h] [-l LABEL] [-o OUTPUT] FILE ...\n" "$(basename "$0")"
+    exit $status
+}
+
+[ $# -eq 0 ] && usage 1
+
+label="noname"
+iso=""
+
+while getopts "ho:l:" opt ; do
+    case $opt in
+        h)
+            usage
+            ;;
+		o)
+			iso=$OPTARG
+			;;
+        l)
+            label=$OPTARG
+            ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+[ -z "$iso" ] && iso=$(mktemp /tmp/iso.XXXX)
+
+mkisofs -l -r -J -f -V "$label" -o "$iso" "$@" && printf "%s\n" "$iso"

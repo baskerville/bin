@@ -1,0 +1,167 @@
+#! /bin/sh
+
+while [ $# -gt 0 ] ; do
+	if [ -e "$1" ]; then
+		mime_type=$(file -L -b --mime-type "$1")
+		fdb -i "$XDG_DATA_HOME"/open.z -a "$(realpath "$1")"
+		case $mime_type in
+			inode/x-empty)
+				e "$1"
+				;;
+			video/*|application/vnd.rn-realmedia)
+				vp "$1"
+				;;
+			audio/*)
+				ap "$1"
+				;;
+			image/vnd.djvu)
+				open -a djview "$1"
+				;;
+			image/x-canon-cr2)
+				dcraw -T -w "$1"
+				;;
+			image/svg+xml|application/x-shockwave-flash)
+				wb "$1"
+				;;
+			image/x-xcf)
+				open -a Gimp "$1"
+				;;
+			image/*)
+				iv "$1"
+				;;
+			application/x-lha)
+				lha x "$1"
+				;;
+			application/postscript|application/pdf)
+				dr "$1"
+				;;
+			application/zip)
+				unzip -d "${1%.*}" "$1"
+				;;
+			application/x-tar)
+				tar xvf "$1"
+				;;
+			application/x-rar)
+				unrar -ad x "$1"
+				;;
+			application/vnd.ms-opentype|application/x-font-ttf|application/vnd.font-fontforge-sfd)
+				fontforge "$1"
+				;;
+			text/html)
+				wb "$1"
+				;;
+			text/troff)
+				man "$1"
+				;;
+			*)
+				case "$1" in
+					*.tar.gz|*.tgz)
+						tar xvzf "$1"
+						;;
+					*.tar.xz)
+						tar xvJf "$1"
+						;;
+					*.tar.bz2|*.tbz2|*.tbz)
+						tar xvjf "$1"
+						;;
+					*.bz2)
+						bunzip2 "$1"
+						;;
+					*.tar)
+						tar xvf "$1"
+						;;
+					*.gz)
+						gunzip "$1"
+						;;
+					*.ace)
+						unace x "$1"
+						;;
+					*.7z)
+						7z x "$1"
+						;;
+					*.chm|*.epub)
+						open "$1"
+						;;
+					*.nzb)
+						nzbget -A "$1"
+						;;
+					*.nfo)
+						e "$1"
+						;;
+					*.pcf|*.bdf|*.pfb)
+						fontforge "$1"
+						;;
+					*.svg)
+						wb "$1"
+						;;
+					*.pps|*.PPS|*.ppt|*.PPT)
+						ppsei "$1"
+						;;
+					*.abw)
+						abiword "$1"
+						;;
+					*.rtf|*.doc)
+						catdoc -w -s cp1252 "$1"
+						;;
+					*.xls)
+						xls2csv -s cp1252 "$1"
+						;;
+					*.xpm)
+						iv "$1"
+						;;
+					*.mp3|*.m3u|*.ogg|*.mpc)
+						ap "$1"
+						;;
+					*.mp4|*.avi|*.mpg|*.mpeg|*.mkv|*.webm|*.ogv|*.f4v|*.m2ts|*.ts)
+						vp "$1"
+						;;
+					*.webarchive)
+						tmp_xml=$(mktemp /tmp/xml.XXXX)
+						tmp_html=$(mktemp /tmp/html.XXXX)
+						plutil -i "$1" -o "$tmp_xml"
+						webarchive_decodemain "$tmp_xml" > "$tmp_html"
+						wb "$tmp_html"
+						rm "$tmp_xml"
+						;;
+					*.blend)
+						blender "$1"
+						;;
+					*.emulecollection)
+						amule-emc "$1"
+						;;
+					*.sparseimage)
+						open "$1"
+						;;
+					*)
+						mime_encoding=$(file -L -b --mime-encoding "$1")
+						case $mime_encoding in
+							*binary)
+								xxd -l 128 "$1"
+								;;
+							*)
+								e "$1"
+								;;
+						esac
+						;;
+				esac
+				;;
+		esac
+	else
+		case "$1" in
+			*://*)
+				wb "$1"
+				;;
+			*:*)
+				open "$1"
+				;;
+			*@*.*)
+				mutt "$1"
+				;;
+			*)
+				echo "file not found: '$1'" >&2
+				exit 1
+				;;
+		esac
+	fi
+	shift
+done

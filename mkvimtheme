@@ -1,0 +1,37 @@
+#! /bin/sh
+
+PRG=gvim
+INIT=""
+BGTYPE=""
+FLAGS="-u NONE -U NONE -N"
+
+while getopts "lds" opt ; do
+	case $opt in
+		l)
+			INIT=" set bg=light |"
+			BGTYPE="light"
+			;;
+		d)
+			INIT=" set bg=dark |"
+			BGTYPE="dark"
+			;;
+		s)
+			FLAGS=""
+			;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+while [ $# -gt 0 ] ; do
+	case "$1" in
+		*256*)
+			PRG=vim ;;
+		*)
+			PRG=gvim ;;
+	esac
+	base=${1%.*}
+	[ -n "$BGTYPE" ] && base="${base}-${BGTYPE}"
+	$PRG $FLAGS -c "syntax on |${INIT} source ${1} | exec \"redir! > ${base}.vimTheme | silent hi | redir END\" | quit"
+	shift
+done

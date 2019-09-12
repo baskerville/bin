@@ -1,0 +1,24 @@
+#! /bin/sh
+
+[ $# -lt 1 ] && exit 1
+
+original=$1
+numclones=${2:-1}
+
+[ -e "$original" ] || exit 1 
+
+counter=1
+bsnm=$(basename "$original")
+name=${bsnm%.*}
+ext=${bsnm##*.}
+[ "$ext" = "$bsnm" ] && ext=""
+
+while [ $counter -le $numclones ] ; do
+    suffix=$(printf '%02i' "$counter")
+    if [ -z "$ext" ] ; then
+        ln "$original" "${name}-${suffix}"
+    else
+        ln "$original" "${name}-${suffix}.${ext}"
+    fi
+    counter=$((counter+1))
+done

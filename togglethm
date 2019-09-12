@@ -1,0 +1,31 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+import neovim
+from glob import glob
+from os.path import join
+
+path=join(os.getenv("HOME"), ".bgtype")
+bgtype = None
+
+with open(path, "r") as f:
+    bgtype = f.read()
+
+if bgtype == "dark":
+    bgtype = "light"
+elif bgtype == "light":
+    bgtype = "dark"
+else:
+    print("Invalid background type read from {}.", file=sys.stderr)
+    sys.exit(1)
+
+with open(path, "w") as f:
+    f.write(bgtype)
+
+for sp in glob("{}*/0".format(join(os.getenv("TMPDIR"), "nvim"))):
+    try:
+        nvim = neovim.attach("socket", path=sp)
+        nvim.command("colorscheme raven-{}".format(bgtype))
+    except:
+        pass

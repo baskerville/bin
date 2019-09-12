@@ -1,0 +1,3 @@
+#! /bin/sh
+
+fdb "$@" -q . | stest -ve | tr '\n' '\0' | xargs -0 fdb "$@" -d

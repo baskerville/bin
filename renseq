@@ -1,0 +1,64 @@
+#! /bin/sh
+
+cmd="mv"
+counter=1
+padding=2
+
+while getopts "cp:s:" opt ; do
+    case $opt in
+        c)
+            cmd="cp"
+            ;;
+        s)
+            counter=$OPTARG
+            ;;
+		p)
+			padding=$OPTARG
+			;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [ $# -lt 2 ] ; then
+    printf "usage: %s [-c cp|mv] [-s START_INDEX] [-p PADDING] BASENAME FILENAME ...\n" "${0##*/}" >&2
+    exit 1
+fi
+
+basename=$1
+shift
+
+for item in "$@" ; do
+    ext=${item##*.}
+    parent=$(dirname "$item")
+    full_parent="$parent/$basename"
+    mkdir -p "$full_parent"
+    num=$(printf "%0*d" $padding $counter)
+    target="$full_parent/$basename$num.$ext"
+
+    if [ "$ext" = "$item" ]
+    then
+        target="$full_parent/$basename$num"
+    elif [ ${#ext} -gt 6 ]
+    then
+        mime_type=$(file -b --mime-type $item)
+        case $mime_type in
+            image/png)
+                ext="png";;
+            image/jpeg)
+                ext="jpg";;
+            image/gif)
+                ext="gif";;
+            image/x-ms-bmp)
+                ext="bmp";;
+            image/tiff)
+                ext="tiff";;
+            *)
+                ext="unkown";;
+        esac
+        target="$full_parent/$basename$num.$ext"
+    fi
+
+    $cmd -v "$item" "$target"
+    counter=$((counter+1))
+done

@@ -1,0 +1,22 @@
+#! /bin/bash
+
+declare -a args
+
+while getopts "e:" opt ; do
+	case $opt in
+		e)
+			args+=("--exclude" "$OPTARG")
+			;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+dest=$1
+shift
+
+cmd='-c'
+
+[ -e "$dest" ] && cmd='-u'
+
+tar "$cmd" -v "${args[@]}" -f "$dest" "$@"

@@ -1,0 +1,17 @@
+#! /bin/sh
+
+[ "$@" ] || exit 1
+
+gray=$(printf '\033[1;30m')
+reset=$(printf '\033[0m')
+tmpout=$(mktemp /tmp/fu.XXXX)
+
+curl -s "https://www.commandlinefu.com/commands/matching/$@/$(printf "%s" "$@" | openssl base64)/plaintext" | grep -v "^# commandlinefu" > "$tmpout"
+
+if [ -t 1 ] ; then
+    sed 's/^#.*/'$gray'&'$reset'/g' "$tmpout"
+else
+    cat "$tmpout"
+fi
+
+rm "$tmpout"

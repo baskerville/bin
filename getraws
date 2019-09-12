@@ -1,0 +1,10 @@
+#! /bin/sh
+
+volume=${1:-"Untitled"}
+base=${2:-"$HOME/art/raw"}
+dest="${base}/$(date +%Y%m%d)"
+
+[ -d "$dest" ] || mkdir "$dest" 2> /dev/null || exit 1
+
+find -E /Volumes/"$volume" -iregex '.*\.(jpg|raf|mp4|mov)' \
+     -exec cp -v {} "$dest" \; && chmod 644 "$dest"/*.*

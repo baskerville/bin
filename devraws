@@ -1,0 +1,12 @@
+#! /bin/sh
+
+ext=${1:-RAF}
+
+for raw in *.${ext} ; do
+    base=${raw%.*}
+    good=$(ls -d "$base".* | grep -v "$raw")
+    if [ -z "$good" ] ; then
+        printf "Developing '%s'.\n" "$raw"
+        dcraw -T -w "$raw"
+    fi
+done

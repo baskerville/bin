@@ -1,0 +1,37 @@
+#! /bin/sh
+
+if [ $# -eq 0 ] ; then
+	printf "usage: %s [-f FONT] [-F HEADER_FONT] [-H] TEXT_FILE ...\n" "${0##*/}"
+	exit 1
+fi
+
+draw_header=0
+font="Courier Prime 10"
+header_font="DejaVu Sans 9"
+
+while getopts "Hf:F:" opt ; do
+	case $opt in
+		f)
+			font=$OPTARG
+			;;
+		F)
+			header_font=$OPTARG
+			;;
+		H)
+			draw_header=1
+			;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+while [ $# -gt 0 ] ; do
+	filepth=$1
+	base=${filepth%.*}
+	if [ $draw_header -eq 1 ] ; then
+		paps --paper A4 --font "$font" --header --header-font "$header_font" --header-date-format "%Y-%m-%d %H:%M" --header-rule-thickness 0.66 "$filepth" > "${base}.ps"
+	else
+		paps --paper A4 --font "$font" "$filepth" > "${base}.ps"
+	fi
+	shift
+done

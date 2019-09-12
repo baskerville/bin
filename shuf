@@ -1,0 +1,4 @@
+#! /usr/bin/env perl
+
+use List::Util 'shuffle';
+print shuffle <>;

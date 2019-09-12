@@ -1,0 +1,10 @@
+#! /bin/sh
+
+filetype=$1
+
+if [ -z "$filetype" ] ; then
+    echo "argument missing" >&2
+    exit 1
+fi
+
+find ~/.local/bin/nvim-osx64/share/nvim/runtime/syntax | grep "syntax/${filetype}.vim"

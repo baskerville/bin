@@ -1,0 +1,6 @@
+#! /bin/sh
+
+while [ $# -gt 0 ] ; do
+	find "$XDG_ETC_DIR" -path "*/.git/*" -prune -o -path "*${1}*" -type f -print0 | xargs -0o e
+    shift
+done

@@ -1,0 +1,12 @@
+#! /bin/sh
+
+SHELL=/usr/local/plan9/bin/rc
+TERM=dumb
+BROWSER=firefox
+mousescrollsize=5
+
+export SHELL TERM BROWSER mousescrollsize
+
+pgrep -x plumber || 9 plumber
+
+9 acme -a -f /mnt/font/Menlo-Regular/15a/font "$@"
