@@ -1,0 +1,6 @@
+#! /bin/sh
+
+path=$(realpath --relative-base "$HOMEBREW_CELLAR" "$1")
+path=${path%%/*}
+
+[ "$path" ] && echo "$path"
