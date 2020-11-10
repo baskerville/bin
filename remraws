@@ -15,6 +15,9 @@ while getopts "hfe:" opt ; do
 		e)
 			ext=$OPTARG
 			;;
+		*)
+			exit 1
+			;;
 	esac
 done
 

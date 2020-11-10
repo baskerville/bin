@@ -18,6 +18,9 @@ while getopts "lds" opt ; do
 		s)
 			FLAGS=""
 			;;
+		*)
+			exit 1
+			;;
 	esac
 done
 

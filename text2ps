@@ -20,6 +20,9 @@ while getopts "Hf:F:" opt ; do
 		H)
 			draw_header=1
 			;;
+		*)
+			exit 1
+			;;
 	esac
 done
 

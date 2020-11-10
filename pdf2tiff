@@ -3,22 +3,25 @@
 density=150
 
 while getopts 'd:' opt ; do
-    case $opt in
-        d)
-            density=$OPTARG
-            ;;
-    esac
+	case $opt in
+		d)
+			density=$OPTARG
+			;;
+		*)
+			exit 1
+			;;
+	esac
 done
 
 shift $((OPTIND - 1))
 
 if [ $# -lt 1 ] ; then
-    printf "%s [-d DENSITY] PDFFILE ...\n" "${0##*/}" >&2
-    exit 1
+	printf "%s [-d DENSITY] PDFFILE ...\n" "${0##*/}" >&2
+	exit 1
 fi
 
 while [ $# -gt 0 ] ; do
-    output=${1%.*}.tiff
-    gs -q -r$density -dSAFER -dNOPAUSE -dBATCH -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -sDEVICE=tiff24nc -sOutputFile="$output" "$1"
-    shift
+	output=${1%.*}.tiff
+	gs -q -r$density -dSAFER -dNOPAUSE -dBATCH -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -sDEVICE=tiff24nc -sOutputFile="$output" "$1"
+	shift
 done

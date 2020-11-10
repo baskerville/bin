@@ -15,6 +15,9 @@ while getopts "cp:s:" opt ; do
 		p)
 			padding=$OPTARG
 			;;
+		*)
+			exit 1
+			;;
     esac
 done
 

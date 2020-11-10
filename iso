@@ -1,9 +1,9 @@
 #! /bin/sh
 
 usage() {
-    status=${1:-0}
-    printf "%s [-h] [-l LABEL] [-o OUTPUT] FILE ...\n" "$(basename "$0")"
-    exit $status
+	status=${1:-0}
+	printf "%s [-h] [-l LABEL] [-o OUTPUT] FILE ...\n" "$(basename "$0")"
+	exit $status
 }
 
 [ $# -eq 0 ] && usage 1
@@ -12,17 +12,20 @@ label="noname"
 iso=""
 
 while getopts "ho:l:" opt ; do
-    case $opt in
-        h)
-            usage
-            ;;
+	case $opt in
+		h)
+			usage
+			;;
 		o)
 			iso=$OPTARG
 			;;
-        l)
-            label=$OPTARG
-            ;;
-    esac
+		l)
+			label=$OPTARG
+			;;
+		*)
+			exit 1
+			;;
+	esac
 done
 
 shift $(($OPTIND - 1))

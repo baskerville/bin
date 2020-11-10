@@ -8,43 +8,46 @@ filter='Cubic'
 colorspace='sRGB'
 
 while getopts 's:e:q:g:f:c:' opt ; do
-    case $opt in
-        s)
-            side=$OPTARG
-            ;;
-        e)
-            ext=$OPTARG
-            ;;
-        q)
-            quality=$OPTARG
-            ;;
-        g)
-            gravity=$OPTARG
-            ;;
-        f)
-            filter=$OPTARG
-            ;;
-        c)
-            colorspace=$OPTARG
-            ;;
-    esac
+	case $opt in
+		s)
+			side=$OPTARG
+			;;
+		e)
+			ext=$OPTARG
+			;;
+		q)
+			quality=$OPTARG
+			;;
+		g)
+			gravity=$OPTARG
+			;;
+		f)
+			filter=$OPTARG
+			;;
+		c)
+			colorspace=$OPTARG
+			;;
+		*)
+			exit 1
+			;;
+	esac
 done
 
 shift $(($OPTIND - 1))
 
 if [ $# -lt 1 ] ; then
-    printf "usage: %s [-s SIDE|-e EXT|-q QUALITY|-g GRAVITY|-f FILTER|-c COLORSPACE] FILE ...\n" "${0##*/}"
-    exit 1
+	printf "usage: %s [-s SIDE|-e EXT|-q QUALITY|-g GRAVITY|-f FILTER|-c COLORSPACE] FILE ...\n" "${0##*/}"
+	exit 1
 fi
 
 while [ $# -gt 0 ] ; do
-    imagepath=$1
-    imagedir=$(dirname "$imagepath")
-    imagebase=$(basename "$imagepath")
-    imagebase=${imagebase%.*}
-    thumbdir="$imagedir/thumbnails"
-    mkdir -p "$thumbdir"
-    thumbpath="$thumbdir/tn_$imagebase.$ext"
-    convert -scale ${side}x${side}^ -gravity $gravity -extent ${side}x${side} -quality $quality -interlace Line "$imagepath" "$thumbpath"
-    shift
+	imagepath=$1
+	imagedir=$(dirname "$imagepath")
+	imagebase=$(basename "$imagepath")
+	imagebase=${imagebase%.*}
+	thumbdir="$imagedir/thumbnails"
+	mkdir -p "$thumbdir"
+	thumbpath="$thumbdir/tn_$imagebase.$ext"
+	convert -scale ${side}x${side}^ -gravity $gravity -extent ${side}x${side} -quality $quality -interlace Line "$imagepath" "$thumbpath"
+	shift
 done

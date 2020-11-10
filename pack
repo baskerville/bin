@@ -7,6 +7,9 @@ while getopts "e:" opt ; do
 		e)
 			args+=("--exclude" "$OPTARG")
 			;;
+		*)
+			exit 1
+			;;
 	esac
 done
 

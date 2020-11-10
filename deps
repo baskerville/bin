@@ -22,6 +22,9 @@ while getopts 'hos:' opt ; do
 		h)
 			printf "%s [-h|-o|-s SUFFIX] CSOURCE ...\n" "${0##*/}"
 			;;
+		*)
+			exit 1
+			;;
 	esac
 done
 

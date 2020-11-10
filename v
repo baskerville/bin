@@ -34,6 +34,9 @@ while getopts 'hlacpi:s:' opt ; do
 		s)
 			sort_by=$OPTARG
 			;;
+		*)
+			exit 1
+			;;
 	esac
 done
 

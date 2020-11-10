@@ -6,20 +6,23 @@ left_padding=0
 right_padding=0
 
 while getopts "t:b:l:r:" opt ; do
-    case $opt in
-        t)
-            top_padding=$OPTARG
-            ;;
-        b)
-            bottom_padding=$OPTARG
-            ;;
-        l)
-            left_padding=$OPTARG
-            ;;
-        r)
-            right_padding=$OPTARG
-            ;;
-    esac
+	case $opt in
+		t)
+			top_padding=$OPTARG
+			;;
+		b)
+			bottom_padding=$OPTARG
+			;;
+		l)
+			left_padding=$OPTARG
+			;;
+		r)
+			right_padding=$OPTARG
+			;;
+		*)
+			exit 1
+			;;
+	esac
 done
 
 shift $((OPTIND - 1))
