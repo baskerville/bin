@@ -1,0 +1,3 @@
+#! /bin/sh
+
+brew ls -v "$1" | grep '/s\?bin/'
