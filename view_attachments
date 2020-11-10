@@ -11,7 +11,7 @@ find -L "$tmp_dir" -iname "*.pps" -exec ppsei {} +
 # Find and open documents
 find -EL "$tmp_dir" -iregex ".*\.(pdf|e?ps)" -exec dr {} +
 # Find and open images
-find -EL "$tmp_dir" -iregex '.*\.(jpe?g|png|gif|tif?f|bmp)' -exec iv {} +
+find -EL "$tmp_dir" -iregex '.*\.(jpe?g|png|gif|tif?f|bmp)' -exec riv -b -s Alphabetical {} +
 # Find and open movies
 find -EL "$tmp_dir" -iregex '.*\.(mp4|avi|mov|mpe?g|wmv|flv)' -exec vp {} +
 # Find and open unnamed files
