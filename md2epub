@@ -4,4 +4,4 @@ input=$1
 shift
 output=${input%.*}.epub
 
-pandoc -f markdown+smart -t epub2 --filter pandoc-filter-svgmath --highlight-style monochrome --epub-subdirectory OEBPS -o "$output" "$input" "$@"
+pandoc -f markdown+smart -t epub2 --filter pandoc-filter-svgmath --highlight-style monochrome --epub-subdirectory OEBPS "$@" -o "$output" "$input"
